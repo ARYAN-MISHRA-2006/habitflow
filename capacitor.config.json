@@ -1,0 +1,15 @@
+{
+  "appId": "com.habitflow.app",
+  "appName": "HabitFlow",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  },
+  "plugins": {
+    "LocalNotifications": {
+      "smallIcon": "ic_stat_icon",
+      "iconColor": "#0C8DE9"
+    }
+  }
+}
