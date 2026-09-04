@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
+
 import { useAuth } from '../contexts/AuthContext';
+
 import {
   Sparkles,
   Lock,
@@ -12,6 +14,7 @@ export const AuthPage: React.FC = () => {
   const {
     loginWithEmail,
     signUpWithEmail,
+    loginWithGoogle,
   } = useAuth();
 
   const [isSignUp, setIsSignUp] = useState(false);
@@ -21,6 +24,7 @@ export const AuthPage: React.FC = () => {
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
 
   const handleSubmit = async (
     e: React.FormEvent
@@ -76,6 +80,29 @@ export const AuthPage: React.FC = () => {
       );
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    setErrorMsg('');
+    setSuccessMsg('');
+    setGoogleLoading(true);
+
+    try {
+      const res = await loginWithGoogle();
+
+      if (res.error) {
+        setErrorMsg(res.error);
+        setGoogleLoading(false);
+      }
+    } catch (error) {
+      console.error('Google authentication error:', error);
+
+      setErrorMsg(
+        'Google sign-in failed. Please try again.'
+      );
+
+      setGoogleLoading(false);
     }
   };
 
@@ -148,12 +175,60 @@ export const AuthPage: React.FC = () => {
           </div>
         )}
 
+        {/* Google Sign In */}
+        <button
+          type="button"
+          onClick={handleGoogleLogin}
+          disabled={googleLoading || loading}
+          className="w-full py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-60 disabled:cursor-not-allowed text-slate-800 dark:text-white font-bold text-sm transition-all flex items-center justify-center gap-3"
+        >
+          {googleLoading ? (
+            'Connecting to Google...'
+          ) : (
+            <>
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  fill="#4285F4"
+                  d="M21.35 12.27c0-.71-.06-1.4-.18-2.05H12v3.88h5.24a4.48 4.48 0 0 1-1.94 2.94v2.45h3.14c1.84-1.69 2.91-4.18 2.91-7.22Z"
+                />
+                <path
+                  fill="#34A853"
+                  d="M12 21.5c2.63 0 4.84-.87 6.45-2.36l-3.14-2.45c-.87.58-1.98.92-3.31.92-2.54 0-4.69-1.72-5.46-4.03H3.3v2.53A9.75 9.75 0 0 0 12 21.5Z"
+                />
+                <path
+                  fill="#FBBC05"
+                  d="M6.54 13.58A5.86 5.86 0 0 1 6.23 12c0-.55.11-1.09.31-1.58V7.89H3.3A9.75 9.75 0 0 0 2.25 12c0 1.57.38 3.05 1.05 4.11l3.24-2.53Z"
+                />
+                <path
+                  fill="#EA4335"
+                  d="M12 6.39c1.43 0 2.72.49 3.73 1.46l2.8-2.8C16.84 3.48 14.63 2.5 12 2.5a9.75 9.75 0 0 0-8.7 5.39l3.24 2.53C7.31 8.11 9.46 6.39 12 6.39Z"
+                />
+              </svg>
+
+              Continue with Google
+            </>
+          )}
+        </button>
+
+        {/* Divider */}
+        <div className="flex items-center gap-3">
+          <div className="flex-1 h-px bg-slate-200 dark:bg-slate-800" />
+          <span className="text-[10px] font-bold text-slate-400 uppercase">
+            or
+          </span>
+          <div className="flex-1 h-px bg-slate-200 dark:bg-slate-800" />
+        </div>
+
         {/* Authentication Form */}
         <form
           onSubmit={handleSubmit}
           className="space-y-4 text-xs"
         >
-
           {/* Name - Sign Up Only */}
           {isSignUp && (
             <div>
@@ -241,7 +316,7 @@ export const AuthPage: React.FC = () => {
           {/* Submit */}
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || googleLoading}
             className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold text-sm shadow-md shadow-brand-500/20 active:scale-98 transition-all"
           >
             {loading

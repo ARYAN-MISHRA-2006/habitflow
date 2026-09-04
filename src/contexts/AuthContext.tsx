@@ -10,20 +10,17 @@ import { Profile } from '../types';
 interface AuthContextType {
   user: Profile | null;
   loading: boolean;
-
   loginWithEmail: (
     email: string,
     pass: string
   ) => Promise<{ error?: string }>;
-
   signUpWithEmail: (
     name: string,
     email: string,
     pass: string
   ) => Promise<{ error?: string; message?: string }>;
-
+  loginWithGoogle: () => Promise<{ error?: string }>;
   logout: () => Promise<void>;
-
   updateProfile: (
     updates: Partial<Profile>
   ) => Promise<void>;
@@ -109,14 +106,12 @@ export const AuthProvider: React.FC<{
         'Could not fetch user profile:',
         error
       );
-
       setUser(null);
     } catch (error) {
       console.error(
         'Error fetching Supabase profile:',
         error
       );
-
       setUser(null);
     }
   };
@@ -129,7 +124,6 @@ export const AuthProvider: React.FC<{
       console.error(
         'Supabase is not configured. Check VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.'
       );
-
       setUser(null);
       setLoading(false);
       return;
@@ -198,7 +192,7 @@ export const AuthProvider: React.FC<{
   }, []);
 
   /**
-   * REAL LOGIN
+   * REAL EMAIL LOGIN
    */
   const loginWithEmail = async (
     email: string,
@@ -227,7 +221,7 @@ export const AuthProvider: React.FC<{
   };
 
   /**
-   * REAL SIGNUP
+   * REAL EMAIL SIGNUP
    */
   const signUpWithEmail = async (
     name: string,
@@ -262,6 +256,34 @@ export const AuthProvider: React.FC<{
       return {
         message:
           'Account created successfully. Please check your email to confirm your account, then sign in.',
+      };
+    }
+
+    return {};
+  };
+
+  /**
+   * GOOGLE LOGIN
+   */
+  const loginWithGoogle = async () => {
+    if (!isSupabaseConfigured || !supabase) {
+      return {
+        error:
+          'Authentication is unavailable. Please try again later.',
+      };
+    }
+
+    const { error } =
+      await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin,
+        },
+      });
+
+    if (error) {
+      return {
+        error: error.message,
       };
     }
 
@@ -325,6 +347,7 @@ export const AuthProvider: React.FC<{
         loading,
         loginWithEmail,
         signUpWithEmail,
+        loginWithGoogle,
         logout,
         updateProfile,
       }}
