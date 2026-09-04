@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import CaloriePage from './pages/CaloriePage';
+import { CalorieProvider } from './contexts/CalorieContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { HabitProvider, useHabits } from './contexts/HabitContext';
@@ -109,6 +111,7 @@ const MainApp: React.FC = () => {
           {activeTab === 'analytics' && <AnalyticsPage />}
           {activeTab === 'goals' && <GoalsPage />}
           {activeTab === 'achievements' && <AchievementsPage />}
+          {activeTab === 'calories' && <CaloriePage />}
           {activeTab === 'insights' && <InsightsPage />}
           {activeTab === 'profile' && <ProfilePage />}
           {activeTab === 'settings' && <SettingsPage />}
@@ -138,7 +141,9 @@ export const App: React.FC = () => {
     <ThemeProvider>
       <AuthProvider>
         <HabitProvider>
-          <MainApp />
+          <CalorieProvider>
+            <MainApp />
+          </CalorieProvider>
         </HabitProvider>
       </AuthProvider>
     </ThemeProvider>

@@ -9,7 +9,8 @@ import {
   Lightbulb, 
   Settings, 
   User, 
-  Sparkles 
+  Sparkles,
+  Apple
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -26,6 +27,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
     { id: 'goals', label: 'Goals', icon: Target },
     { id: 'achievements', label: 'Achievements', icon: Trophy },
     { id: 'insights', label: 'Insights', icon: Lightbulb },
+    { id: 'calories', label: 'Calories', icon: Apple },
   ];
 
   const bottomItems = [
