@@ -38,14 +38,16 @@ export default async function handler(
     const response = await fetch(url.toString());
 
     if (!response.ok) {
-      const text = await response.text();
+  const text = await response.text();
 
-      console.error('USDA API error:', text);
+  console.error('USDA API error:', response.status, text);
 
-      return res.status(response.status).json({
-        error: 'USDA food search failed',
-      });
-    }
+  return res.status(response.status).json({
+    error: 'USDA food search failed',
+    status: response.status,
+    details: text,
+  });
+}
 
     const data = await response.json();
 
